@@ -1,5 +1,16 @@
 class Charm {
-  constructor() {
+  constructor(renderingEngine = PIXI) {
+
+    if (renderingEngine === undefined) throw new Error("Please assign a rendering engine in the constructor before using charm.js"); 
+
+    //Find out which rendering engine is being used (the default is Pixi)
+    this.renderer = "";
+
+    //If the `renderingEngine` is Pixi, set up Pixi object aliases
+    if (renderingEngine.ParticleContainer && renderingEngine.Sprite) {
+      this.renderer = "pixi";
+    }
+    
 
     //An array to store the global tweens
     this.globalTweens = [];
@@ -54,25 +65,27 @@ class Charm {
 
     //Add `scaleX` and `scaleY` properties to Pixi sprites
     this._addScaleProperties = (sprite) => {
-      if (!sprite.scaleX && sprite.scale.x) {
-        Object.defineProperty(
-          sprite,
-          "scaleX", 
-          {
-            get() {return sprite.scale.x}, 
-            set(value) {sprite.scale.x = value} 
-          }
-        );
-      }
-      if (!sprite.scaleY && sprite.scale.y) {
-        Object.defineProperty( 
-          sprite,
-          "scaleY", 
-          {
-            get() {return sprite.scale.y}, 
-            set(value) {sprite.scale.y = value} 
-          }
-        );
+      if (this.renderer === "pixi") {
+        if (!sprite.scaleX && sprite.scale.x) {
+          Object.defineProperty(
+            sprite,
+            "scaleX", 
+            {
+              get() {return sprite.scale.x}, 
+              set(value) {sprite.scale.x = value} 
+            }
+          );
+        }
+        if (!sprite.scaleY && sprite.scale.y) {
+          Object.defineProperty( 
+            sprite,
+            "scaleY", 
+            {
+              get() {return sprite.scale.y}, 
+              set(value) {sprite.scale.y = value} 
+            }
+          );
+        }
       }
     };
   }
@@ -387,7 +400,8 @@ class Charm {
     delayBeforeRepeat = 0
   ) {
 
-    let bounce = "bounce " + startMagnitude + " " + endMagnitude;
+    let bounceX = "bounce " + xStartMagnitude + " " + xEndMagnitude;
+    let bounceY = "bounce " + yStartMagnitude + " " + yEndMagnitude;
 
     //Add `scaleX` and `scaleY` properties to Pixi sprites
     this._addScaleProperties(sprite);
@@ -397,13 +411,13 @@ class Charm {
       //Create the scaleX tween
       [
         sprite, "scaleX", sprite.scaleX, scaleFactorX, frames, 
-        bounce, yoyo, delayBeforeRepeat
+        bounceX, yoyo, delayBeforeRepeat
       ],
 
       //Create the scaleY tween
       [
         sprite, "scaleY", sprite.scaleY, scaleFactorY, frames, 
-        bounce, yoyo, delayBeforeRepeat
+        bounceY, yoyo, delayBeforeRepeat
       ]
     ]);
 

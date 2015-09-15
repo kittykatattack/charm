@@ -8,7 +8,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Charm = (function () {
   function Charm() {
+    var _this = this;
+
+    var renderingEngine = arguments[0] === undefined ? PIXI : arguments[0];
+
     _classCallCheck(this, Charm);
+
+    if (renderingEngine === undefined) throw new Error("Please assign a rendering engine in the constructor before using charm.js");
+
+    //Find out which rendering engine is being used (the default is Pixi)
+    this.renderer = "";
+
+    //If the `renderingEngine` is Pixi, set up Pixi object aliases
+    if (renderingEngine.ParticleContainer && renderingEngine.Sprite) {
+      this.renderer = "pixi";
+    }
 
     //An array to store the global tweens
     this.globalTweens = [];
@@ -83,25 +97,27 @@ var Charm = (function () {
 
     //Add `scaleX` and `scaleY` properties to Pixi sprites
     this._addScaleProperties = function (sprite) {
-      if (!sprite.scaleX && sprite.scale.x) {
-        Object.defineProperty(sprite, "scaleX", {
-          get: function get() {
-            return sprite.scale.x;
-          },
-          set: function set(value) {
-            sprite.scale.x = value;
-          }
-        });
-      }
-      if (!sprite.scaleY && sprite.scale.y) {
-        Object.defineProperty(sprite, "scaleY", {
-          get: function get() {
-            return sprite.scale.y;
-          },
-          set: function set(value) {
-            sprite.scale.y = value;
-          }
-        });
+      if (_this.renderer === "pixi") {
+        if (!sprite.scaleX && sprite.scale.x) {
+          Object.defineProperty(sprite, "scaleX", {
+            get: function get() {
+              return sprite.scale.x;
+            },
+            set: function set(value) {
+              sprite.scale.x = value;
+            }
+          });
+        }
+        if (!sprite.scaleY && sprite.scale.y) {
+          Object.defineProperty(sprite, "scaleY", {
+            get: function get() {
+              return sprite.scale.y;
+            },
+            set: function set(value) {
+              sprite.scale.y = value;
+            }
+          });
+        }
       }
     };
   }
@@ -118,7 +134,7 @@ var Charm = (function () {
     totalFrames) {
       var type = arguments[5] === undefined ? "smoothstep" : arguments[5];
 
-      var _this = this;
+      var _this2 = this;
 
       var yoyo = arguments[6] === undefined ? false : arguments[6];
       var delayBeforeRepeat = arguments[7] === undefined ? 0 //Delay in frames before repeating
@@ -149,7 +165,7 @@ var Charm = (function () {
 
         //Add the tween to the global `tweens` array. The `tweens` array is
         //updated on each frame
-        _this.globalTweens.push(o);
+        _this2.globalTweens.push(o);
       };
 
       //Call `o.start` to start the tween
@@ -176,14 +192,14 @@ var Charm = (function () {
 
             //If it's not a spline, use one of the ordinary easing functions
             if (typeArray[0] !== "bounce") {
-              curvedTime = _this.easingFormulas[type](normalizedTime);
+              curvedTime = _this2.easingFormulas[type](normalizedTime);
             }
 
             //If it's a spline, use the `spline` function and apply the
             //2 additional `type` array values as the spline's start and
             //end points
             else {
-              curvedTime = _this.easingFormulas.spline(normalizedTime, o.startMagnitude, 0, 1, o.endMagnitude);
+              curvedTime = _this2.easingFormulas.spline(normalizedTime, o.startMagnitude, 0, 1, o.endMagnitude);
             }
 
             //Interpolate the sprite's property based on the curve
@@ -209,13 +225,13 @@ var Charm = (function () {
         if (o.onComplete) o.onComplete();
 
         //Remove the tween from the `tweens` array
-        _this.globalTweens.splice(_this.globalTweens.indexOf(o), 1);
+        _this2.globalTweens.splice(_this2.globalTweens.indexOf(o), 1);
 
         //If the tween's `yoyo` property is `true`, create a new tween
         //using the same values, but use the current tween's `startValue`
         //as the next tween's `endValue`
         if (yoyo) {
-          _this.wait(delayBeforeRepeat).then(function () {
+          _this2.wait(delayBeforeRepeat).then(function () {
             o.start(o.endValue, o.startValue);
           });
         }
@@ -240,7 +256,7 @@ var Charm = (function () {
     //`tweensToAdd` is an array containing multiple `tweenProperty` calls
 
     value: function makeTween(tweensToAdd) {
-      var _this2 = this;
+      var _this3 = this;
 
       //Create an object to manage the tweens
       var o = {};
@@ -252,7 +268,7 @@ var Charm = (function () {
       tweensToAdd.forEach(function (tweenPropertyArguments) {
 
         //Use the tween property arguments to make a new tween
-        var newTween = _this2.tweenProperty.apply(_this2, _toConsumableArray(tweenPropertyArguments));
+        var newTween = _this3.tweenProperty.apply(_this3, _toConsumableArray(tweenPropertyArguments));
 
         //Push the new tween into this object's internal `tweens` array
         o.tweens.push(newTween);
@@ -426,12 +442,13 @@ var Charm = (function () {
       var yEndMagnitude = arguments[7] === undefined ? -10 : arguments[7];
       var friction = arguments[8] === undefined ? 0.98 : arguments[8];
 
-      var _this3 = this;
+      var _this4 = this;
 
       var yoyo = arguments[9] === undefined ? true : arguments[9];
       var delayBeforeRepeat = arguments[10] === undefined ? 0 : arguments[10];
 
-      var bounce = "bounce " + startMagnitude + " " + endMagnitude;
+      var bounceX = "bounce " + xStartMagnitude + " " + xEndMagnitude;
+      var bounceY = "bounce " + yStartMagnitude + " " + yEndMagnitude;
 
       //Add `scaleX` and `scaleY` properties to Pixi sprites
       this._addScaleProperties(sprite);
@@ -439,10 +456,10 @@ var Charm = (function () {
       var o = this.makeTween([
 
       //Create the scaleX tween
-      [sprite, "scaleX", sprite.scaleX, scaleFactorX, frames, bounce, yoyo, delayBeforeRepeat],
+      [sprite, "scaleX", sprite.scaleX, scaleFactorX, frames, bounceX, yoyo, delayBeforeRepeat],
 
       //Create the scaleY tween
-      [sprite, "scaleY", sprite.scaleY, scaleFactorY, frames, bounce, yoyo, delayBeforeRepeat]]);
+      [sprite, "scaleY", sprite.scaleY, scaleFactorY, frames, bounceY, yoyo, delayBeforeRepeat]]);
 
       //Add some friction to the `endValue` at the end of each tween
       o.tweens.forEach(function (tween) {
@@ -456,7 +473,7 @@ var Charm = (function () {
             //remove the tween from the global `tweens` array
             if (tween.endValue <= 1) {
               tween.endValue = 1;
-              _this3.removeTween(tween);
+              _this4.removeTween(tween);
             }
           }
         };
@@ -472,7 +489,7 @@ var Charm = (function () {
     value: function followCurve(sprite, pointsArray, totalFrames) {
       var type = arguments[3] === undefined ? "smoothstep" : arguments[3];
 
-      var _this4 = this;
+      var _this5 = this;
 
       var yoyo = arguments[4] === undefined ? false : arguments[4];
       var delayBeforeRepeat = arguments[5] === undefined ? 0 : arguments[5];
@@ -500,7 +517,7 @@ var Charm = (function () {
 
         //Add the tween to the `globalTweens` array. The `globalTweens` array is
         //updated on each frame
-        _this4.globalTweens.push(o);
+        _this5.globalTweens.push(o);
       };
 
       //Call `tween.start` to start the first tween
@@ -528,7 +545,7 @@ var Charm = (function () {
             //If it's not a spline, use one of the ordinary tween
             //functions
             if (typeArray[0] !== "bounce") {
-              curvedTime = _this4.easingFormulas[type](normalizedTime);
+              curvedTime = _this5.easingFormulas[type](normalizedTime);
             }
 
             //If it's a spline, use the `spline` function and apply the
@@ -536,12 +553,12 @@ var Charm = (function () {
             //end points
             else {
               //curve = tweenFunction.spline(n, type[1], 0, 1, type[2]);
-              curvedTime = _this4.easingFormulas.spline(normalizedTime, o.startMagnitude, 0, 1, o.endMagnitude);
+              curvedTime = _this5.easingFormulas.spline(normalizedTime, o.startMagnitude, 0, 1, o.endMagnitude);
             }
 
             //Apply the Bezier curve to the sprite's position
-            sprite.x = _this4.easingFormulas.cubicBezier(curvedTime, p[0][0], p[1][0], p[2][0], p[3][0]);
-            sprite.y = _this4.easingFormulas.cubicBezier(curvedTime, p[0][1], p[1][1], p[2][1], p[3][1]);
+            sprite.x = _this5.easingFormulas.cubicBezier(curvedTime, p[0][0], p[1][0], p[2][0], p[3][0]);
+            sprite.y = _this5.easingFormulas.cubicBezier(curvedTime, p[0][1], p[1][1], p[2][1], p[3][1]);
 
             //Add one to the `elapsedFrames`
             o.frameCounter += 1;
@@ -565,12 +582,12 @@ var Charm = (function () {
         if (o.onComplete) o.onComplete();
 
         //Remove the tween from the global `tweens` array
-        _this4.globalTweens.splice(_this4.globalTweens.indexOf(o), 1);
+        _this5.globalTweens.splice(_this5.globalTweens.indexOf(o), 1);
 
         //If the tween's `yoyo` property is `true`, reverse the array and
         //use it to create a new tween
         if (yoyo) {
-          _this4.wait(delayBeforeRepeat).then(function () {
+          _this5.wait(delayBeforeRepeat).then(function () {
             o.pointsArray = o.pointsArray.reverse();
             o.start(o.pointsArray);
           });
@@ -596,7 +613,7 @@ var Charm = (function () {
       var type = arguments[3] === undefined ? "smoothstep" : arguments[3];
       var loop = arguments[4] === undefined ? false : arguments[4];
 
-      var _this5 = this;
+      var _this6 = this;
 
       var yoyo = arguments[5] === undefined ? false : arguments[5];
       var delayBetweenSections = arguments[6] === undefined ? 0 //Delay, in milliseconds, between sections
@@ -619,7 +636,7 @@ var Charm = (function () {
 
         //Use the `makeTween` function to tween the sprite's
         //x and y position
-        var tween = _this5.makeTween([
+        var tween = _this6.makeTween([
 
         //Create the x axis tween between the first x value in the
         //current point and the x value in the following point
@@ -639,7 +656,7 @@ var Charm = (function () {
           //If the sprite hasn't reached the end of the
           //path, tween the sprite to the next point
           if (currentPoint < pathArray.length - 1) {
-            _this5.wait(delayBetweenSections).then(function () {
+            _this6.wait(delayBetweenSections).then(function () {
               tween = makePath(currentPoint);
             });
           }
@@ -655,7 +672,7 @@ var Charm = (function () {
               if (yoyo) pathArray.reverse();
 
               //Optionally wait before restarting
-              _this5.wait(delayBetweenSections).then(function () {
+              _this6.wait(delayBetweenSections).then(function () {
 
                 //Reset the `currentPoint` to 0 so that we can
                 //restart at the first point
@@ -692,7 +709,7 @@ var Charm = (function () {
       var type = arguments[3] === undefined ? "smoothstep" : arguments[3];
       var loop = arguments[4] === undefined ? false : arguments[4];
 
-      var _this6 = this;
+      var _this7 = this;
 
       var yoyo = arguments[5] === undefined ? false : arguments[5];
       var delayBeforeContinue = arguments[6] === undefined ? 0 //Delay, in milliseconds, between sections
@@ -709,7 +726,7 @@ var Charm = (function () {
 
         //Use the custom `followCurve` function to make
         //a sprite follow a curve
-        var tween = _this6.followCurve(sprite, pathArray[currentCurve], frames, type);
+        var tween = _this7.followCurve(sprite, pathArray[currentCurve], frames, type);
 
         //When the tween is complete, advance the `currentCurve` by one.
         //Add an optional delay between path segments, and then make the
@@ -717,7 +734,7 @@ var Charm = (function () {
         tween.onComplete = function () {
           currentCurve += 1;
           if (currentCurve < pathArray.length) {
-            _this6.wait(delayBeforeContinue).then(function () {
+            _this7.wait(delayBeforeContinue).then(function () {
               tween = makePath(currentCurve);
             });
           }
@@ -739,7 +756,7 @@ var Charm = (function () {
 
               //After an optional delay, reset the sprite to the
               //beginning of the path and make the next new path
-              _this6.wait(delayBeforeContinue).then(function () {
+              _this7.wait(delayBeforeContinue).then(function () {
                 currentCurve = 0;
                 sprite.x = pathArray[0][0];
                 sprite.y = pathArray[0][1];
@@ -786,7 +803,7 @@ var Charm = (function () {
 
     //A utility to remove tweens from the game
     value: function removeTween(tweenObject) {
-      var _this7 = this;
+      var _this8 = this;
 
       //Remove the tween if `tweenObject` doesn't have any nested
       //tween objects
@@ -798,7 +815,7 @@ var Charm = (function () {
       } else {
         tweenObject.pause();
         tweenObject.tweens.forEach(function (element) {
-          _this7.globalTweens.splice(_this7.globalTweens.indexOf(element), 1);
+          _this8.globalTweens.splice(_this8.globalTweens.indexOf(element), 1);
         });
       }
     }
