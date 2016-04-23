@@ -1,4 +1,4 @@
-export class Charm {
+class Charm {
   constructor(renderingEngine = PIXI) {
 
     if (renderingEngine === undefined) throw new Error("Please assign a rendering engine in the constructor before using charm.js");
@@ -204,8 +204,6 @@ export class Charm {
 
         //When the tween has finished playing, run the end tasks
         else {
-
-          // make sure we end on the actual end property
           sprite[property] = o.endValue;
           o.end();
         }
@@ -558,9 +556,7 @@ export class Charm {
 
         //When the tween has finished playing, run the end tasks
         else {
-
-          // make sure we end on the actual end property
-          sprite[property] = o.endValue;
+          //sprite[property] = o.endValue;
           o.end();
         }
       }
