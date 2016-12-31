@@ -807,7 +807,12 @@ class Charm {
     //tween objects
     if (!tweenObject.tweens) {
       tweenObject.pause();
-      this.globalTweens.splice(this.globalTweens.indexOf(tweenObject), 1);
+
+      //array.splice(-1,1) will always remove last elemnt of array, so this
+      //extra check prevents that (Thank you, MCumic10! https://github.com/kittykatattack/charm/issues/5)
+      if (this.globalTweens.indexOf(tweenObject) != -1) {
+        this.globalTweens.splice(this.globalTweens.indexOf(tweenObject), 1);
+      }
 
       //Otherwise, remove the nested tween objects
     } else {
