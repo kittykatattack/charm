@@ -6,6 +6,25 @@ engine.
 
 (Important! this library targets Pixi v3.9, which is the most stable version of Pixi, and is the only version I can recommend using. This library will eventually be upgraded for Pixi v4 when the v4 branch matures.)
 
+Table of contents
+-----------------
+
+[Setting up](#settingup) <br>
+[Sliding tweens](#sliding) <br>
+[Tween objects](#tweenObjects) <br>
+[Setting the easing type](#easingTypes) <br>
+[Following curves](#followingCurves) <br>
+[Following paths](#followingPaths) <br>
+[Following connected curves](#followingConnectedCurves) <br>
+[Fade-out and fade-in](#fade) <br>
+[Pulse](#pulse) <br>
+[Scale](#scale) <br>
+[Breathe](#breathe) <br>
+[Strobe](#strobe) <br>
+[Wobble](#wobble) <br>
+[Make your own custom tweens](#custom) <br>
+
+<a id="settingup"></a>
 Setting up and running Charm
 ----------------------------
 To start using Charm, link to the `charm.js` file in your HTML
@@ -38,6 +57,7 @@ Now you're ready to start tweening!
 Let's learn how to use Charm by looking in-depth at one its most
 useful methods: `slide`.
 
+<a id="sliding"></a>
 Sliding tweens
 --------------
 
@@ -79,6 +99,7 @@ c.slide(pixie, 128, 128, 120, "smoothstep", true);
 ```
 (`true` turns the yoyo effect on.)
 
+<a id="tweenObjects"></a>
 Tween objects
 -------------
 
@@ -106,6 +127,7 @@ slideTween.play();
 Tween objects have a `playing` property that will be `true` if the tween is currently playing. 
 All Charm's methods return tween objects that you can control and access like this.
 
+<a id="easingTypes"></a>
 Setting the easing types
 ------------------------
 
@@ -125,6 +147,7 @@ The default easing type for most of Charm's tweens is "smoothstep".
 
 Use any of these easing types in Charm's tween methods in the examples that follow.
 
+<a id="followingCurves"></a>
 Following curves
 ----------------
 
@@ -167,6 +190,7 @@ anySprite.anchor.set(0.5, 0.5);
 The `slide` and `followCurve` methods are good for simple back and forth animation effects, 
 but you can also connect them together to make sprites traverse complex paths.
 
+<a id="followingPaths"></a>
 Following paths
 ---------------
 
@@ -207,7 +231,8 @@ Here's the effect of this code:
 
 ![Following paths](images/3.png)
 
-Following curves
+<a id="followingConnectedCurves"></a>
+Following connected curves
 ----------------
 
 You can make a sprite follow a series of connected curves with the
@@ -249,6 +274,7 @@ animated sprites for games.
 Charm has bunch of other built-in, tween effects that you'll find a lot of use for in 
 games and applications. Here's a quick round-up:
 
+<a id="fade"></a>
 Fade-out and fade-in
 --------------------
 
@@ -261,6 +287,7 @@ c.fadeIn(anySprite);
 The optional second argument is the duration, in frames, that the fade should 
 last (the default is 60 frames.)
 
+<a id="pulse"></a>
 Pulse
 -----
 
@@ -276,6 +303,7 @@ fading in again, set the 3rd argument to `0.5`, like this:
 c.pulse(anySprite, 60, 0.5);
 ```
 
+<a id="scale"></a>
 Scale
 -----
 
@@ -290,6 +318,7 @@ c.scale(
 );
 ```
 
+<a id="breathe"></a>
 Breathe
 -------
 
@@ -307,6 +336,7 @@ c.breathe(
 );
 ```
 
+<a id="strobe"></a>
 Strobe
 ------
 
@@ -316,6 +346,7 @@ rapidly changing its scale.
 c.strobe(sprite);
 ```
 
+<a id="wobble"></a>
 Wobble
 ------
 
@@ -327,6 +358,7 @@ If you use any of these scaling tween effects (`scale`, `breathe`,
 `strobe` or `wobble`), center the sprite's anchor point so that the scaling happens 
 from the sprite's center.
 
+<a id="custom"></a>
 Make your own custom tweens
 ---------------------------
 
