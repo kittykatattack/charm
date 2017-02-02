@@ -1,8 +1,10 @@
-Charm - Tweening for Pixi
+Charm - Tweening for Pixi (v3.9)
 =========================
 
 Charm is an easy to use tweening library for the [Pixi](https://github.com/GoodBoyDigital/pixi.js/) 2D rendering
 engine.
+
+(Important! this library targets Pixi v3.9, which is the most stable version of Pixi, and is the only version I can recommend using. This library will eventually be upgraded for Pixi v4 when the v4 branch matures.)
 
 Setting up and running Charm
 ----------------------------
