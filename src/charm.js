@@ -91,7 +91,7 @@ class Charm {
     //Add `scaleX` and `scaleY` properties to Pixi sprites
     this._addScaleProperties = (sprite) => {
       if (this.renderer === "pixi") {
-        if (!sprite.scaleX && sprite.scale.x) {
+        if (!("scaleX" in sprite) && ("scale" in sprite) && ("x" in sprite.scale)) {
           Object.defineProperty(
             sprite,
             "scaleX", {
@@ -104,7 +104,7 @@ class Charm {
             }
           );
         }
-        if (!sprite.scaleY && sprite.scale.y) {
+        if (!("scaleY" in sprite) && ("scale" in sprite) && ("y" in sprite.scale)) {
           Object.defineProperty(
             sprite,
             "scaleY", {
