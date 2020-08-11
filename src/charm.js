@@ -136,6 +136,7 @@ class Charm {
 
     //Create the tween object
     let o = {};
+    o.playing = true;
 
     //If the tween is a bounce type (a spline), set the
     //start and end magnitude values
@@ -147,13 +148,13 @@ class Charm {
 
     //Use `o.start` to make a new tween using the current
     //end point values
-    o.start = (startValue, endValue) => {
+    o.start = (startValue, endValue, isPlaying = true) => {
 
       //Clone the start and end values so that any possible references to sprite
       //properties are converted to ordinary numbers 
       o.startValue = JSON.parse(JSON.stringify(startValue));
       o.endValue = JSON.parse(JSON.stringify(endValue));
-      o.playing = true;
+      o.playing = isPlaying;
       o.totalFrames = totalFrames;
       o.frameCounter = 0;
 
@@ -213,9 +214,6 @@ class Charm {
     //The `end` method will be called when the tween is finished
     o.end = () => {
 
-      //Set `playing` to `false`
-      o.playing = false;
-
       //Call the tween's `onComplete` method, if it's been assigned
       if (o.onComplete) o.onComplete();
 
@@ -227,8 +225,10 @@ class Charm {
       //as the next tween's `endValue` 
       if (yoyo) {
         this.wait(delayBeforeRepeat).then(() => {
-          o.start(o.endValue, o.startValue);
+          o.start(o.endValue, o.startValue, o.playing);
         });
+      } else {
+        o.playing = false;
       }
     };
 
