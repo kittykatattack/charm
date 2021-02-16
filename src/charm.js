@@ -346,7 +346,14 @@ class Charm {
 
     ]);
   }
-
+  
+  //`rotate`
+  rotate(sprite, endRotation, frames = 60, type = "smoothstep") {
+    return this.tweenProperty(
+      sprite, "rotation", sprite.rotation, endRotation, frames, type
+    );
+  }
+  
   breathe(
     sprite, endScaleX = 0.8, endScaleY = 0.8,
     frames = 60, yoyo = true, delayBeforeRepeat = 0
